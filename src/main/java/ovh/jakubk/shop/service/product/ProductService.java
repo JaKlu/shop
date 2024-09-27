@@ -2,7 +2,7 @@ package ovh.jakubk.shop.service.product;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ovh.jakubk.shop.exceptions.ProductNotFoundException;
+import ovh.jakubk.shop.exceptions.ResourceNotFoundException;
 import ovh.jakubk.shop.model.Category;
 import ovh.jakubk.shop.model.Product;
 import ovh.jakubk.shop.repository.CategoryRepository;
@@ -46,7 +46,7 @@ public class ProductService implements IProductService {
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ProductService implements IProductService {
         productRepository.findById(id)
                 .ifPresentOrElse(productRepository::delete,
                         () -> {
-                            throw new ProductNotFoundException("Product not found");
+                            throw new ResourceNotFoundException("Product not found");
                         });
 
     }
@@ -64,7 +64,7 @@ public class ProductService implements IProductService {
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct, request))
                 .map(productRepository::save)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
     }
 
