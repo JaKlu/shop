@@ -38,15 +38,15 @@ public class ImageService implements IImageService {
     }
 
     @Override
-    public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) {
+    public List<ImageDto> saveImages(Long productId, List<MultipartFile> files) {
         Product product = productService.getProductById(productId);
         List<ImageDto> savedImageDto = new ArrayList<>();
 
         for (MultipartFile file : files) {
             try {
                 Image image = new Image();
-                image.setFileName(file.getName());
-                image.setFileType(image.getFileType());
+                image.setFileName(file.getOriginalFilename());
+                image.setFileType(file.getContentType());
                 image.setImage(new SerialBlob(file.getBytes()));
                 image.setProduct(product);
 
@@ -60,19 +60,16 @@ public class ImageService implements IImageService {
                 imageRepository.save(savedImage);
 
                 ImageDto imageDto = new ImageDto();
-                imageDto.setImageId(savedImage.getId());
-                imageDto.setImageName(savedImage.getFileName());
+                imageDto.setId(savedImage.getId());
+                imageDto.setFileName(savedImage.getFileName());
                 imageDto.setDownloadUrl(savedImage.getDownloadUrl());
 
                 savedImageDto.add(imageDto);
             } catch (IOException | SQLException e) {
                 throw new RuntimeException(e.getMessage());
             }
-            return savedImageDto;
         }
-
-
-        return null;
+        return savedImageDto;
     }
 
     @Override

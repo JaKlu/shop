@@ -30,7 +30,7 @@ public class ImageController {
     public ResponseEntity<ApiResponse> saveImages(
             @RequestParam List<MultipartFile> files, @RequestParam Long productId) {
         try {
-            List<ImageDto> imageDtos = imageService.saveImages(files, productId);
+            List<ImageDto> imageDtos = imageService.saveImages(productId, files);
             return ResponseEntity.ok(new ApiResponse("Upload success", imageDtos));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)

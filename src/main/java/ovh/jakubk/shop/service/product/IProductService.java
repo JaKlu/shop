@@ -1,5 +1,6 @@
 package ovh.jakubk.shop.service.product;
 
+import ovh.jakubk.shop.dto.ProductDto;
 import ovh.jakubk.shop.model.Product;
 import ovh.jakubk.shop.request.AddProductRequest;
 import ovh.jakubk.shop.request.ProductUpdateRequest;
@@ -29,4 +30,8 @@ public interface IProductService {
     List<Product> getProductsByBrandAndName(String brand, String name);
 
     Long countProductsByBrandAndName(String brand, String name);
+
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    ProductDto convertToDto(Product product);
 }
