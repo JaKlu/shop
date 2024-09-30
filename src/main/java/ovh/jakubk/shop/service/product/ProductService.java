@@ -22,7 +22,7 @@ public class ProductService implements IProductService {
 
     @Override
     public Product addProduct(AddProductRequest request) {
-        Category category = Optional.of(categoryRepository
+        Category category = Optional.ofNullable(categoryRepository
                         .findByName(request.getCategory().getName()))
                 .orElseGet(() -> {
                     Category newCategory = new Category(request.getCategory().getName());
@@ -109,7 +109,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
-        return productRepository.findByBranAndName(brand, name);
+        return productRepository.findByBrandAndName(brand, name);
     }
 
     @Override
