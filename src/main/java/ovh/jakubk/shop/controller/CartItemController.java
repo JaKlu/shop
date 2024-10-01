@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ovh.jakubk.shop.exceptions.ResourceNotFoundException;
 import ovh.jakubk.shop.response.ApiResponse;
 import ovh.jakubk.shop.service.cart.ICartItemService;
+import ovh.jakubk.shop.service.cart.ICartService;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -14,12 +15,16 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequestMapping("${api.prefix}/cartItems")
 public class CartItemController {
     private final ICartItemService cartItemService;
+    private final ICartService cartService;
 
     @PostMapping("/item/add")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam Long cartId,
+    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam(required = false) Long cartId,
                                                      @RequestParam Long productId,
                                                      @RequestParam Integer quantity) {
         try {
+            if (cartId == null) {
+                cartId = cartService.initializeNewCart();
+            }
             cartItemService.addItemToCart(cartId, productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Add item success", null));
         } catch (ResourceNotFoundException e) {
@@ -53,4 +58,3 @@ public class CartItemController {
         }
     }
 }
-
