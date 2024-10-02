@@ -1,7 +1,9 @@
 package ovh.jakubk.shop.service.order;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ovh.jakubk.shop.dto.OrderDto;
 import ovh.jakubk.shop.enums.OrderStatus;
 import ovh.jakubk.shop.exceptions.ResourceNotFoundException;
 import ovh.jakubk.shop.model.Cart;
@@ -24,6 +26,7 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartService cartService;
+    private final ModelMapper modelMapper;
 
     @Override
     public Order placeOrder(Long userId) {
@@ -67,14 +70,21 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Order getOrder(Long id) {
-
-        return orderRepository.findById(id)
+    public OrderDto getOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+                .map(this::convertToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
     @Override
-    public List<Order> getUserOrders(Long userId) {
-        return orderRepository.findByUserId(userId);
+    public List<OrderDto> getUserOrders(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return orders.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    private OrderDto convertToDto(Order order) {
+        return modelMapper.map(order, OrderDto.class);
     }
 }
