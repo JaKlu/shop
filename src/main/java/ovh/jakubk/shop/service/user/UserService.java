@@ -1,7 +1,9 @@
 package ovh.jakubk.shop.service.user;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ovh.jakubk.shop.dto.UserDto;
 import ovh.jakubk.shop.exceptions.AlreadyExistException;
 import ovh.jakubk.shop.exceptions.ResourceNotFoundException;
 import ovh.jakubk.shop.model.User;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @Service
 public class UserService implements IUserService {
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public User getUserById(Long userId) {
@@ -35,7 +38,7 @@ public class UserService implements IUserService {
                     user.setPassword(req.getPassword());
                     return userRepository.save(user);
                 })
-                .orElseThrow(() -> new AlreadyExistException(request.getEmail() +  " already exist"));
+                .orElseThrow(() -> new AlreadyExistException(request.getEmail() + " already exist"));
     }
 
     @Override
@@ -57,5 +60,10 @@ public class UserService implements IUserService {
                         () -> {
                             throw new ResourceNotFoundException("User not found");
                         });
+    }
+
+    @Override
+    public UserDto convertUserToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 }
